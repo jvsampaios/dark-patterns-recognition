@@ -18,24 +18,24 @@ def main():
 
         for token in data:
             result = presence_classifier.predict(presence_vect.transform([token]))
-            if result == 'Dark':
+            if result[0] == 'Dark':
                 cat = category_classifier.predict(category_vect.transform([token]))
-                output.append(cat[0])
+                # Converte explicitamente de numpy.str_ para string nativa do Python
+                output.append(str(cat[0])) 
             else:
-                output.append(result[0])
+                output.append(str(result[0]))
 
-        dark = [data[i] for i in range(len(output)) if output[i] == 'Dark']
+        # Filtra os dark patterns apenas para o log/print no console do backend
+        dark = [data[i] for i in range(len(output)) if output[i] != 'Not Dark']
         for d in dark:
             print(d)
-        print()
-        print(len(dark))
+        print(f"\nTotal Dark Patterns: {len(dark)}")
 
-        message = '{ \'result\': ' + str(output) + ' }'
-        print(message)
+        # Cria um dicionário nativo e usa o jsonify corretamente
+        response_dict = {'result': output}
+        print(response_dict)
 
-        json = jsonify(message)
-
-        return json
+        return jsonify(response_dict)
 
 if __name__ == '__main__':
     app.run(threaded=True, debug=True)

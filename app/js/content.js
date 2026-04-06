@@ -34,9 +34,7 @@ function scrape() {
     body: JSON.stringify({ tokens: filtered_elements }),
   })
     .then((resp) => resp.json())
-    .then((data) => {
-      data = data.replace(/'/g, '"');
-      json = JSON.parse(data);
+    .then((json) => {
       let dp_count = 0;
       let element_index = 0;
 
@@ -46,8 +44,9 @@ function scrape() {
           continue;
         }
 
-        if (json.result[i] !== "Not Dark") {
-          highlight(elements[element_index], json.result[i]);
+        // Acessamos json.result diretamente
+        if (json.result[element_index] !== "Not Dark") { 
+          highlight(elements[element_index], json.result[element_index]);
           dp_count++;
         }
         element_index++;
@@ -64,7 +63,6 @@ function scrape() {
     })
     .catch((error) => {
       alert(error);
-      alert(error.stack);
     });
 }
 
